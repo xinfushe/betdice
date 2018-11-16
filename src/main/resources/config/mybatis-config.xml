@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- 使用jdbc的getGeneratedKeys，获取数据库自增主键 -->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!-- 使用列别名替换列名，默认：true -->
+        <!-- select name as label from table -->
+        <setting name="useColumnLabel" value="true"/>
+        <!-- 开启驼峰命名转换：Table(create_time) -> Entity(createTime) -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 将延迟加载设置为true -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 将积极加载设置为false -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!-- 二级缓存的总开关 -->
+        <!-- 还需要在指定的mapper映射文件中开启独立的开关 -->
+        <setting name="cacheEnabled" value="false"/>
+    </settings>
+</configuration>

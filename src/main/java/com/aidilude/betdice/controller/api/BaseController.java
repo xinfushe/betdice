@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/base")
-@CrossOrigin
+//@CrossOrigin
 public class BaseController {
 
     @GetMapping("/serverTime")

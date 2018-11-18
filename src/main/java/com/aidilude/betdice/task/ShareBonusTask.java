@@ -33,7 +33,7 @@ public class ShareBonusTask {
     @Resource
     private ApplicationComponent applicationComponent;
 
-    @Scheduled(cron = "0 0 12 * * ?")   //秒 分 时 日 月 星期 年
+//    @Scheduled(cron = "0 0 12 * * ?")   //秒 分 时 日 月 星期 年
     public void run() {
         String lastRound = StringUtils.gainLastRound();
         Turn turn = turnMapper.selectByPrimaryKey(lastRound, apiProperties.getShareBonusCurrency());

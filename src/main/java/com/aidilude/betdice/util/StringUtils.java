@@ -2,10 +2,7 @@ package com.aidilude.betdice.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class StringUtils {
 

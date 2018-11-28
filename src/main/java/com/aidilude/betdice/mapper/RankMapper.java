@@ -1,9 +1,11 @@
 package com.aidilude.betdice.mapper;
 
+import com.aidilude.betdice.mapper.provider.RankProvider;
 import com.aidilude.betdice.po.Rank;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectProvider;
 
 import java.util.List;
 
@@ -36,5 +38,9 @@ public interface RankMapper {
                                                @Param("winCurrency") String winCurrency,
                                                @Param("miningCurrency") String miningCurrency,
                                                @Param("offset") Integer offset);
+
+    @SelectProvider(type = RankProvider.class, method = "selectByCondition")
+    public List<Rank> selectByCondition(@Param("round") String round,
+                                        @Param("currency") String currency);
 
 }

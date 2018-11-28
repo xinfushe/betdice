@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -30,12 +31,16 @@ public class CreateRankTask {
     public void run(){
         String todayRound = StringUtils.gainCurrentRound();
         logger.info("【轮次：" + todayRound + "生成排行榜】任务开始...");
-        List<Rank> yesterdayRanks = rankMapper.selectRanksWithAllColumn(todayRound, apiProperties.getRankWinCurrency(), apiProperties.getRankMiningCurrency(), apiProperties.getRankOffset());
-        yesterdayRanks.forEach(rank -> {
-            Integer count = rankMapper.insert(rank);
-            if(count == null || count == 0) {
-                logger.error("【轮次：" + todayRound + "生成排行榜】失败，当前记录：【" + JSON.toJSONString(rank) + "】");
-            }
+        String[] temp = apiProperties.getRankWinCurrency().split("\\|");
+        List<String> rankCurrencys = Arrays.asList(temp);
+        rankCurrencys.forEach(currency -> {
+            List<Rank> yesterdayRanks = rankMapper.selectRanksWithAllColumn(todayRound, currency, apiProperties.getRankMiningCurrency(), apiProperties.getRankOffset());
+            yesterdayRanks.forEach(rank -> {
+                Integer count = rankMapper.insert(rank);
+                if(count == null || count == 0) {
+                    logger.error("【轮次：" + todayRound + "生成排行榜】失败，当前记录：【" + JSON.toJSONString(rank) + "】");
+                }
+            });
         });
         logger.info("【轮次：" + todayRound + "生成排行榜】任务结束...");
     }

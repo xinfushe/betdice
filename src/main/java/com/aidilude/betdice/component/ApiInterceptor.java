@@ -33,7 +33,7 @@ public class ApiInterceptor extends HandlerInterceptorAdapter {
         if(uri.contains("/serverTime"))
             return true;
         /******************************************身份验证******************************************/
-        if(uri.contains("/queryCurrentTurn") || uri.contains("/recordTransaction")){
+        if(uri.contains("/queryCurrentTurn") || uri.contains("/recordTransaction") || uri.contains("/pledge")){
             String realIP = applicationComponent.getIPAddress(request);
             if(!applicationComponent.isLegalIP(realIP)){
                 Result.returnMsg(response, ResultCode.IllegalAccess, "非法访问");

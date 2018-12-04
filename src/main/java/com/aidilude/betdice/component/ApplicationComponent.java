@@ -39,7 +39,11 @@ public class ApplicationComponent {
     public boolean isLegalIP(String IP){
         if(StringUtils.isEmpty(IP))
             return false;
-        if(!IP.equals(apiProperties.getChainIP()) && !IP.equals("127.0.0.1") && !IP.equals("192.168.1.12")) {
+        if(!IP.equals(apiProperties.getChainIP())
+                && !IP.equals("127.0.0.1")
+                && !IP.equals("192.168.1.12")
+                && !IP.equals("0:0:0:0:0:0:0:1")
+                && !IP.equals("192.168.1.21")) {
             return false;
         }
         return true;

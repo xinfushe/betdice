@@ -21,4 +21,6 @@ public class SystemProperties {
 
     private Integer maxReceivingPledgorCount;
 
+    private String pledgeCurrency;
+
 }

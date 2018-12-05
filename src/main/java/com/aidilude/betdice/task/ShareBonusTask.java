@@ -129,7 +129,7 @@ public class ShareBonusTask {
                 BigDecimal customerGet = officialBalance.multiply((BigDecimal) holdRatio.get("ratio")).setScale(0, BigDecimal.ROUND_DOWN);
                 String transferResult = null;
                 try {
-                    transferResult = applicationComponent.transfer(customerGet, turn.getOfficialWalletSecret(), (String) holdRatio.get("address"));
+//                    transferResult = applicationComponent.transfer(customerGet, turn.getOfficialWalletSecret(), (String) holdRatio.get("address"));
                 } catch (Exception e) {
                     logger.error("【" + lastRound + "】分红转账异常，用户：【" + holdRatio.get("address").toString() + "】，应得金额：【" + customerGet.toString() + "】币种：【" + apiProperties.getShareBonusCurrency() + "】", e);
                     failedCount++;

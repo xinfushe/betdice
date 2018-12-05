@@ -15,9 +15,7 @@ public enum ResultCode
 
     InvalidParam(403),   //参数非法
 
-    NotFind(404),   //无法找到
-
-    FrequentlyCall(505);   //频繁调用
+    NotFind(404);   //无法找到
 
     private final int value;
 

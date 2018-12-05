@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @Data
 @NotNull(message = "转账记录为空")
-public class PledgeTransaction {
+public class PledgeTransactionDto {
 
     @NotBlank(message = "交易ID为空")
     private String id;

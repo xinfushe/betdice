@@ -1,5 +1,6 @@
 package com.aidilude.betdice.mapper.provider;
 
+import com.aidilude.betdice.po.PledgeRecord;
 import com.aidilude.betdice.util.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;

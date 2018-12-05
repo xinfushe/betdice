@@ -89,13 +89,13 @@ public class ApplicationComponent {
         return ip;
     }
 
-    public String transfer(BigDecimal amount, String secret, String receiver) throws Exception{
+    public String transfer(BigDecimal amount, String secret, String receiver, String currency) throws Exception{
 //        amount = amount.multiply(new BigDecimal(100000000));
         JSONObject jsonBody = new JSONObject();
         jsonBody.put("type", apiProperties.getTransferType());
         jsonBody.put("secret", secret);
         jsonBody.put("fee", apiProperties.getTransferFee());
-        jsonBody.put("args", "[\"" + apiProperties.getShareBonusCurrency() + "\",\"" + amount.toString() + "\",\"" + receiver + "\"]");
+        jsonBody.put("args", "[\"" + currency + "\",\"" + amount.toString() + "\",\"" + receiver + "\"]");
         String url = apiProperties.getChainRequestProtocol() + apiProperties.getChainIP() + ":" + apiProperties.getChainPort() + apiProperties.getPreffix() + apiProperties.getTransfer();
         return HttpUtils.doPut(url, null, jsonBody.toJSONString());
     }

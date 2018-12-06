@@ -3,15 +3,13 @@ package com.aidilude.betdice.service;
 import com.aidilude.betdice.component.ApplicationComponent;
 import com.aidilude.betdice.dto.PledgeTransactionDto;
 import com.aidilude.betdice.dto.WithdrawDto;
-import com.aidilude.betdice.mapper.PledgeRecordMapper;
-import com.aidilude.betdice.mapper.ReceivingAccountMapper;
-import com.aidilude.betdice.mapper.WithdrawRecordMapper;
-import com.aidilude.betdice.po.PledgeRecord;
-import com.aidilude.betdice.po.ReceivingAccount;
-import com.aidilude.betdice.po.WithdrawRecord;
+import com.aidilude.betdice.mapper.*;
+import com.aidilude.betdice.po.*;
 import com.aidilude.betdice.property.ApiProperties;
 import com.aidilude.betdice.property.SystemProperties;
 import com.aidilude.betdice.util.HttpUtils;
+import com.aidilude.betdice.util.StringUtils;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +21,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -45,6 +44,12 @@ public class PledgeService {
 
     @Resource
     private WithdrawRecordMapper withdrawRecordMapper;
+
+    @Resource
+    private BonusRecordMapper bonusRecordMapper;
+
+    @Resource
+    private TurnMapper turnMapper;
 
     public ReceivingAccount newReceivingAccount(){
         String newAccount = null;
@@ -130,6 +135,61 @@ public class PledgeService {
         if(count3 == null || count3 == 0)
             throw new Exception("扣收钱账户余额异常");
         return true;
+    }
+
+    public void pledgeBonusTransfer(){
+        Integer successCount = 0;
+        Integer failedCount = 0;
+        Integer totalCount = 0;
+        String lastRound = StringUtils.gainLastRound();
+        log.info("【质押分红转账】开始执行，轮次：【" + lastRound + "】");
+        List<BonusRecord> bonusRecords = bonusRecordMapper.selectByCondition(null, lastRound, null, null, 0);
+        if(bonusRecords == null || bonusRecords.size() == 0){
+            log.error("【质押分红转账】没有质押统计记录");
+            return;
+        }
+        Turn lastTurn = turnMapper.selectByPrimaryKey(lastRound, apiProperties.getShareBonusCurrency());
+        if(lastTurn == null){
+            log.error("【质押分红转账】没有上一轮投注");
+            return;
+        }
+        for(BonusRecord bonusRecord : bonusRecords){
+            String result;
+            try {
+                result = applicationComponent.transfer(bonusRecord.getAmount().setScale(0, BigDecimal.ROUND_DOWN), lastTurn.getOfficialWalletSecret(), bonusRecord.getPledgorAccount(), apiProperties.getShareBonusCurrency());
+            } catch (Exception e) {
+                log.error("【质押分红转账】转账网络异常，质押分红统计：【" + JSON.toJSONString(bonusRecord) + "】", e);
+                failedCount++;
+                totalCount++;
+                continue;
+            }
+            if(StringUtils.isEmpty(result)) {
+                log.error("【质押分红转账】转账结果为空，质押分红统计：【" + JSON.toJSONString(bonusRecord) + "】");
+                failedCount++;
+                totalCount++;
+                continue;
+            }
+            JSONObject jsonResult = JSONObject.parseObject(result);
+            if(jsonResult.getBooleanValue("success") != true){
+                log.error("【质押分红转账】转账结果不成功，转账结果：【" + jsonResult.toJSONString() + "】，质押分红统计：【" + JSON.toJSONString(bonusRecord) + "】");
+                failedCount++;
+                totalCount++;
+                continue;
+            }
+            bonusRecord.setTransactionId(jsonResult.getString("transactionId"));
+            bonusRecord.setTransferTime(new Date());
+            bonusRecord.setStatus(1);
+            Integer count = bonusRecordMapper.updateStatus(bonusRecord);
+            if(count == null || count == 0){
+                log.error("【质押分红转账】质押分红统计状态修改失败，转账结果：【" + jsonResult.toJSONString() + "】，质押分红统计：【" + JSON.toJSONString(bonusRecord) + "】");
+                failedCount++;
+                totalCount++;
+                continue;
+            }
+            successCount++;
+            totalCount++;
+        }
+        log.info("【质押分红转账】执行结束，轮次：【" + lastRound + "】，总数：【" + totalCount + "】，成功数：【" + successCount + "】，失败数：【" + failedCount + "】");
     }
 
     public static void main(String[] args) {

@@ -146,4 +146,12 @@ public class PledgeController {
         return Result.returnSingleData(result);
     }
 
+    @GetMapping("/bonusTransfer")
+    @ApiOperation(value = "质押分红转账", response = Result.class)
+    public Result bonusTransfer(){
+        pledgeService.pledgeBonusTransfer();
+        return Result.ok("执行");
+    }
+
+
 }

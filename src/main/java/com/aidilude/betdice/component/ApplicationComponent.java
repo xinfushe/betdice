@@ -96,7 +96,8 @@ public class ApplicationComponent {
         jsonBody.put("secret", secret);
         jsonBody.put("fee", apiProperties.getTransferFee());
         jsonBody.put("args", "[\"" + currency + "\",\"" + amount.toString() + "\",\"" + receiver + "\"]");
-        String url = apiProperties.getChainRequestProtocol() + apiProperties.getChainIP() + ":" + apiProperties.getChainPort() + apiProperties.getPreffix() + apiProperties.getTransfer();
+//        String url = apiProperties.getChainRequestProtocol() + apiProperties.getChainIP() + ":" + apiProperties.getChainPort() + apiProperties.getPreffix() + apiProperties.getTransfer();
+        String url = "http://192.168.1.12:4096/api/chains/ubiquity/transactions/unsigned";
         return HttpUtils.doPut(url, null, jsonBody.toJSONString());
     }
 

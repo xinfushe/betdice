@@ -23,4 +23,6 @@ public class SystemProperties {
 
     private String pledgeCurrency;
 
+    private Integer pledgeBonusRatio;
+
 }

@@ -1,5 +1,6 @@
 package com.aidilude.betdice.controller.api;
 
+import com.aidilude.betdice.cache.WithdrawCountCache;
 import com.aidilude.betdice.dto.PledgeTransactionDto;
 import com.aidilude.betdice.dto.WithdrawDto;
 import com.aidilude.betdice.mapper.PledgeRecordMapper;
@@ -124,6 +125,10 @@ public class PledgeController {
         if(bindingResult.hasErrors()){
             String errorMsg = bindingResult.getFieldError().getDefaultMessage();
             return Result.returnMsg(ResultCode.InvalidParam, errorMsg);
+        }
+        Integer todayWithdrawCount = WithdrawCountCache.get(withdrawDto.getPledgorAccount());
+        if(todayWithdrawCount != null && todayWithdrawCount >= 2){
+            return Result.returnMsg(ResultCode.ExceedWithdrawCount, "今日提现次数用完");
         }
         List<WithdrawRecord> withdrawRecords = withdrawRecordMapper.selectByCondition(null, withdrawDto.getTransactionId(), null);
         if(withdrawRecords != null && withdrawRecords.size() != 0)

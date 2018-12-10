@@ -1,5 +1,6 @@
 package com.aidilude.betdice.component;
 
+import com.aidilude.betdice.cache.WithdrawCountCache;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -18,7 +19,7 @@ public class StartLoader implements ApplicationRunner {
 
     public void loadSysParams(){
         System.out.println("【系统参数】加载中...");
-
+        WithdrawCountCache.init();
         System.out.println("【系统参数】加载完成...");
     }
 

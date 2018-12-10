@@ -1,5 +1,6 @@
 package com.aidilude.betdice.service;
 
+import com.aidilude.betdice.cache.WithdrawCountCache;
 import com.aidilude.betdice.component.ApplicationComponent;
 import com.aidilude.betdice.dto.PledgeTransactionDto;
 import com.aidilude.betdice.dto.WithdrawDto;
@@ -134,6 +135,13 @@ public class PledgeService {
         Integer count3 = receivingAccountMapper.update(0, withdrawDto.getWithdrawAmount().multiply(new BigDecimal("-1")), pledgeRecords.get(0).getReceivingAccount());
         if(count3 == null || count3 == 0)
             throw new Exception("扣收钱账户余额异常");
+        //4.今日提现次数+1
+        Integer todayWithdrawCount = WithdrawCountCache.get(withdrawDto.getPledgorAccount());
+        if(todayWithdrawCount == null){
+            WithdrawCountCache.put(withdrawDto.getPledgorAccount(), 1);
+        }else{
+            WithdrawCountCache.put(withdrawDto.getPledgorAccount(), ++todayWithdrawCount);
+        }
         return true;
     }
 

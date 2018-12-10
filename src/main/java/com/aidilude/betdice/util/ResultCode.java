@@ -15,7 +15,9 @@ public enum ResultCode
 
     InvalidParam(403),   //参数非法
 
-    NotFind(404);   //无法找到
+    NotFind(404),   //无法找到
+
+    ExceedWithdrawCount(444);   //超过提现次数
 
     private final int value;
 

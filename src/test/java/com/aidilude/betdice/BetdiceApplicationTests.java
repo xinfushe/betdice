@@ -1,5 +1,6 @@
 package com.aidilude.betdice;
 
+import com.aidilude.betdice.cache.WithdrawCountCache;
 import com.aidilude.betdice.component.ApplicationComponent;
 import com.aidilude.betdice.mapper.BaseMapper;
 import com.aidilude.betdice.mapper.MiningRecordMapper;
@@ -41,7 +42,11 @@ public class BetdiceApplicationTests {
 
 	@Test
 	public void contextLoads() throws InterruptedException {
-
+		WithdrawCountCache.put("123456", 1);
+		WithdrawCountCache.put("654321", 2);
+		System.out.println(WithdrawCountCache.getCache());
+		WithdrawCountCache.clear();
+		System.out.println(WithdrawCountCache.getCache());
 	}
 
 }

@@ -44,7 +44,7 @@ public class PledgeStatisticsTask {
     @Resource
     private TurnMapper turnMapper;
 
-    @Scheduled(cron = "30 50 11 * * ?")   //每日23点59分排行统计截止
+//    @Scheduled(cron = "30 50 11 * * ?")   //每日23点59分排行统计截止
     public void run() {
         String lastRound = StringUtils.gainLastRound();
         Turn lastTurn = turnMapper.selectByPrimaryKey(lastRound, apiProperties.getShareBonusCurrency());

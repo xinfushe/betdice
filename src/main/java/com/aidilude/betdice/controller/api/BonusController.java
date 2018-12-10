@@ -2,7 +2,6 @@ package com.aidilude.betdice.controller.api;
 
 import com.aidilude.betdice.mapper.BonusRecordMapper;
 import com.aidilude.betdice.mapper.PledgeRecordMapper;
-import com.aidilude.betdice.property.ApiProperties;
 import com.aidilude.betdice.property.SystemProperties;
 import com.aidilude.betdice.util.Result;
 import com.aidilude.betdice.util.ResultCode;
@@ -17,14 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bonus")
 public class BonusController {
-
-    @Resource
-    private ApiProperties apiProperties;
 
     @Resource
     private SystemProperties systemProperties;
@@ -49,16 +46,31 @@ public class BonusController {
         //4.统计今日预估分红（比例）
         BigDecimal totalWithdrawAbleAmount = pledgeRecordMapper.selectAllWithdrawAmount(null);
         BigDecimal todayBonusExpectRatio = withdrawAbleAmount.divide(totalWithdrawAbleAmount, 5, BigDecimal.ROUND_DOWN);
-        //5.统计每10万个ASCHBet质押的XAS收益
-        BigDecimal unit = new BigDecimal("10000000000000");
-        BigDecimal unitBonusExpectRatio = unit.divide(totalWithdrawAbleAmount, 5, BigDecimal.ROUND_DOWN);
         Map<String, Object> result = new HashMap<>();
         result.put("totalPledgeAmount", totalPledgeAmount);
         result.put("withdrawAbleAmount", withdrawAbleAmount);
         result.put("historyBonusAmount", historyBonusAmount);
         result.put("todayBonusExpectRatio", todayBonusExpectRatio);
+        return Result.returnSingleData(result);
+    }
+
+    @GetMapping("/queryPoolBonus")
+    @ApiOperation(value = "查询奖池分红信息", response = Result.class)
+    public Result queryPoolBonus(){
+        Map<String, Object> result = new HashMap<>();
+        //统计每10万个ASCHBet质押的XAS收益
+        BigDecimal totalWithdrawAbleAmount = pledgeRecordMapper.selectAllWithdrawAmount(null);
+        BigDecimal unit = new BigDecimal("10000000000000");
+        BigDecimal unitBonusExpectRatio = unit.divide(totalWithdrawAbleAmount, 5, BigDecimal.ROUND_DOWN);
         result.put("unitBonusExpectRatio", unitBonusExpectRatio);
         result.put("poolBonusRatio", systemProperties.getPledgeBonusRatio());
+        return Result.returnSingleData(result);
+    }
+
+    @GetMapping("/queryRecentPledgeRecord")
+    @ApiOperation(value = "查询最新质押记录", response = Result.class)
+    public Result queryRecentPledgeRecord(){
+        List<Map<String, Object>> result = pledgeRecordMapper.selectRecent();
         return Result.returnSingleData(result);
     }
 

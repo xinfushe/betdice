@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface PledgeRecordMapper {
 
@@ -41,5 +42,8 @@ public interface PledgeRecordMapper {
 
     @SelectProvider(type = PledgeRecordProvider.class, method = "selectTotalPledgeAmount")
     public BigDecimal selectTotalPledgeAmount(String pledgeAccount);
+
+    @Select("select pledgor_account,amount,transfer_time from pledge_record order by transfer_time desc limit 0,10")
+    public List<Map<String, Object>> selectRecent();
 
 }

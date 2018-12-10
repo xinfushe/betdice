@@ -41,9 +41,9 @@ public class ApplicationComponent {
             return false;
         if(!IP.equals(apiProperties.getChainIP())
                 && !IP.equals("127.0.0.1")
-                && !IP.equals("192.168.1.12")
+                && !IP.equals("192.168.1.22")
                 && !IP.equals("0:0:0:0:0:0:0:1")
-                && !IP.equals("192.168.1.21")) {
+                && !IP.equals("192.168.1.26")) {
             return false;
         }
         return true;

@@ -44,7 +44,7 @@ public class PledgeStatisticsTask {
     @Resource
     private TurnMapper turnMapper;
 
-//    @Scheduled(cron = "30 50 11 * * ?")   //每日23点59分排行统计截止
+    @Scheduled(cron = "0 1 0 * * ?")
     public void run() {
         String lastRound = StringUtils.gainLastRound();
         Turn lastTurn = turnMapper.selectByPrimaryKey(lastRound, apiProperties.getShareBonusCurrency());
@@ -81,6 +81,10 @@ public class PledgeStatisticsTask {
         }
         if (officialAmount == null) {
             log.error("【质押分红统计】找不到奖池余额");
+            return;
+        }
+        if(officialAmount.compareTo(new BigDecimal("0")) == 0){
+            log.error("【质押分红统计】奖池余额为0");
             return;
         }
         officialAmount = officialAmount.divide(new BigDecimal(systemProperties.getPledgeBonusRatio()), 0, BigDecimal.ROUND_DOWN);   //奖池的三分之一拿来分红

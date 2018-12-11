@@ -1,5 +1,6 @@
 package com.aidilude.betdice.controller.api;
 
+import com.aidilude.betdice.cache.PledgePoolCache;
 import com.aidilude.betdice.mapper.BonusRecordMapper;
 import com.aidilude.betdice.mapper.PledgeRecordMapper;
 import com.aidilude.betdice.property.SystemProperties;
@@ -44,8 +45,12 @@ public class BonusController {
         //3.统计历史所得分红
         BigDecimal historyBonusAmount = bonusRecordMapper.selectAmountByCondition(null, null, pledgorAccount, null, 1);
         //4.统计今日预估分红（比例）
-        BigDecimal totalWithdrawAbleAmount = pledgeRecordMapper.selectAllWithdrawAmount(null);
-        BigDecimal todayBonusExpectRatio = withdrawAbleAmount.divide(totalWithdrawAbleAmount, 5, BigDecimal.ROUND_DOWN);
+        BigDecimal totalWithdrawAbleAmount = PledgePoolCache.getTotalWithdrawableAmount();
+        BigDecimal todayBonusExpectRatio;
+        if(totalWithdrawAbleAmount.compareTo(new BigDecimal("0")) == 0)
+            todayBonusExpectRatio = new BigDecimal("0");
+        else
+            todayBonusExpectRatio = withdrawAbleAmount.divide(totalWithdrawAbleAmount, 5, BigDecimal.ROUND_DOWN);
         Map<String, Object> result = new HashMap<>();
         result.put("totalPledgeAmount", totalPledgeAmount);
         result.put("withdrawAbleAmount", withdrawAbleAmount);
@@ -59,9 +64,13 @@ public class BonusController {
     public Result queryPoolBonus(){
         Map<String, Object> result = new HashMap<>();
         //统计每10万个ASCHBet质押的XAS收益
-        BigDecimal totalWithdrawAbleAmount = pledgeRecordMapper.selectAllWithdrawAmount(null);
+        BigDecimal totalWithdrawAbleAmount = PledgePoolCache.getTotalWithdrawableAmount();
         BigDecimal unit = new BigDecimal("10000000000000");
-        BigDecimal unitBonusExpectRatio = unit.divide(totalWithdrawAbleAmount, 5, BigDecimal.ROUND_DOWN);
+        BigDecimal unitBonusExpectRatio;
+        if(totalWithdrawAbleAmount.compareTo(new BigDecimal("0")) == 0)
+            unitBonusExpectRatio = new BigDecimal("0");
+        else
+            unitBonusExpectRatio = unit.divide(totalWithdrawAbleAmount, 5, BigDecimal.ROUND_DOWN);
         result.put("unitBonusExpectRatio", unitBonusExpectRatio);
         result.put("poolBonusRatio", systemProperties.getPledgeBonusRatio());
         return Result.returnSingleData(result);
